@@ -27,3 +27,18 @@ npm run dev
 ```
 
 Open the app at [localhost:3000](http://localhost:3000). You can now use the form to send SMS messages via your Twilio number.
+
+## Bulk sending to DBC members (`scripts/send.js`)
+
+Dry run by default; nothing is sent without `--send --confirm <recipient count>`.
+
+```bash
+node scripts/send.js --body "DBC Messages - ..."                      # dry run, all recipients
+node scripts/send.js --only "Sam Wildman" --body "..."                # dry run, one person
+set -a; . ./.env; set +a
+node scripts/send.js --send --confirm 90 --body "..."                 # real send
+```
+
+Recipients come from a local `recipients.csv` (`status,name,cell`), a snapshot of the
+ACTIVE MEMBERS tab of the DBC Tracking sheet. It is gitignored because it contains phone
+numbers; refresh it from the sheet before each real send. Never commit it.

@@ -22,3 +22,8 @@ yarn-debug.log*
 yarn-error.log*
 
 .eslintcache
+
+# local recipient data (contains phone numbers) - never commit
+recipients.csv
+board_numbers.txt
+dbc_numbers.txt
