@@ -5,6 +5,7 @@ const client = require('twilio')(
   process.env.TWILIO_ACCOUNT_SID,
   process.env.TWILIO_AUTH_TOKEN
 );
+const service = client.notify.services(process.env.TWILIO_NOTIFY_SERVICE_SID);
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -19,19 +20,22 @@ app.get('/api/greeting', (req, res) => {
 
 app.post('/api/messages', (req, res) => {
   res.header('Content-Type', 'application/json');
-  client.messages
-    .create({
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: req.body.to,
-      body: req.body.body
-    })
-    .then(() => {
-      res.send(JSON.stringify({ success: true }));
-    })
-    .catch(err => {
-      console.log(err);
-      res.send(JSON.stringify({ success: false }));
-    });
+  numbers = req.body.to.split(',')
+  const bindings = numbers.map(number => {
+    return JSON.stringify({ binding_type: 'sms', address: number });
+  });
+  service.notifications
+  .create({
+        toBinding: bindings,
+        body: req.body.body
+  })
+  .then(notification => {
+        console.log(notification);
+        res.send(JSON.stringify({ success: true }));
+  })
+  .catch(err => {
+        console.error(err);
+  });
 });
 
 app.listen(3001, () =>
